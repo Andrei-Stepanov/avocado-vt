@@ -20,6 +20,8 @@ basic_program_requirements = ['7za', 'tcpdump', 'nc', 'ip', 'arping']
 
 recommended_programs = {'qemu': [('qemu-kvm', 'kvm'), ('qemu-img',),
                                  ('qemu-io',)],
+                        'spice': [('qemu-kvm', 'kvm'), ('qemu-img',),
+                                  ('qemu-io',)],
                         'libvirt': [('virsh',), ('virt-install',),
                                     ('fakeroot',), ('semanage',),
                                     ('getfattr',), ('restorecon',)],
@@ -29,6 +31,7 @@ recommended_programs = {'qemu': [('qemu-kvm', 'kvm'), ('qemu-img',),
                         'libguestfs': [('perl',)]}
 
 mandatory_programs = {'qemu': basic_program_requirements + ['gcc'],
+                      'spice': basic_program_requirements + ['gcc'],
                       'libvirt': basic_program_requirements,
                       'openvswitch': basic_program_requirements,
                       'lvsb': ['virt-sandbox', 'virt-sandbox-service', 'virsh'],
@@ -36,6 +39,7 @@ mandatory_programs = {'qemu': basic_program_requirements + ['gcc'],
                       'libguestfs': basic_program_requirements}
 
 mandatory_headers = {'qemu': ['Python.h', 'types.h', 'socket.h', 'unistd.h'],
+                     'spice': [],
                      'libvirt': [],
                      'openvswitch': [],
                      'v2v': [],
@@ -43,6 +47,7 @@ mandatory_headers = {'qemu': ['Python.h', 'types.h', 'socket.h', 'unistd.h'],
                      'libguestfs': []}
 
 first_subtest = {'qemu': ['unattended_install', 'steps'],
+                 'spice': ['unattended_install', 'steps'],
                  'libvirt': ['unattended_install'],
                  'openvswitch': ['unattended_install'],
                  'v2v': ['unattended_install'],
@@ -50,6 +55,7 @@ first_subtest = {'qemu': ['unattended_install', 'steps'],
                  'lvsb': []}
 
 last_subtest = {'qemu': ['shutdown'],
+                'spice': ['shutdown'],
                 'libvirt': ['shutdown', 'remove_guest'],
                 'openvswitch': ['shutdown'],
                 'v2v': ['shutdown'],
