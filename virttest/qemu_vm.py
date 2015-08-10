@@ -50,7 +50,7 @@ class VMMigrateProtoUnsupportedError(virt_vm.VMMigrateProtoUnknownError):
     skip the test in this situation.
     """
 
-    def __init__(self, protocol, output):
+    def __init__(self, protocol=None, output=None):
         self.protocol = protocol
         self.output = output
 
@@ -2132,7 +2132,8 @@ class VM(virt_vm.BaseVM):
                 continue
 
             help_cmd = '%s -device %s,\? 2>&1' % (self.qemu_binary, vga_type)
-            help_info = process.system_output(help_cmd, verbose=False)
+            help_info = process.system_output(help_cmd, shell=True,
+                                              verbose=False)
             for pro in re.findall(r'%s.(\w+)=' % vga_type, help_info):
                 key = [vga_type.lower(), pro]
                 if migrate:
