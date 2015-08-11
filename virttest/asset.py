@@ -269,7 +269,7 @@ def get_test_provider_info(provider):
         backend_dic = {}
         if cart_cfgs is not None:
             # Give ability to specify few required configs, each on new line
-            cart_cfgs = list(filter(None, (x.strip() for x in cart_cfgs.splitlines())))
+            cart_cfgs = [x.strip() for x in cart_cfgs.split()]
             backend_dic.update({'cartesian_configs': cart_cfgs})
 
         if subdir is not None:
