@@ -1,3 +1,4 @@
+import distutils
 import logging
 import os
 import glob
@@ -132,7 +133,7 @@ def verify_mandatory_programs(t_type, guest_os):
         except ValueError:
             if cmd == '7za' and guest_os != defaults.DEFAULT_GUEST_OS:
                 logging.warn("Command 7za (required to uncompress JeOS) "
-                             "missing. You can still use virt-test with guest"
+                             "missing. You can still use avocado-vt with guest"
                              " OS's other than JeOS.")
                 continue
             logging.error("Required command %s is missing. You must "
@@ -496,7 +497,11 @@ def create_config_files(test_dir, shared_dir, interactive, t_type, step=None,
                 else:
                     logging.debug("Preserving existing %s file", dst_file)
             else:
-                logging.debug("Config file %s exists, not touching", dst_file)
+                if force_update:
+                    update_msg = 'Config file %s exists, equal to sample'
+                else:
+                    update_msg = 'Config file %s exists, not touching'
+                logging.debug(update_msg, dst_file)
     return step
 
 
@@ -626,7 +631,7 @@ def verify_selinux(datadir, imagesdir, isosdir, tmpdir,
     :param datadir: Abs. path to data-directory symlink
     :param imagesdir: Abs. path to data/images directory
     :param isosdir: Abs. path to data/isos directory
-    :param tmpdir: Abs. path to virt-test tmp dir
+    :param tmpdir: Abs. path to avocado-vt tmp dir
     :param interactive: True if running from console
     :param selinux: Whether setup SELinux contexts for shared/data
     """
@@ -757,6 +762,12 @@ def bootstrap(options, interactive=False):
         else:
             logging.debug("Dir %s exists, not creating",
                           sub_dir_path)
+
+    base_backend_dir = data_dir.get_base_backend_dir()
+    local_backend_dir = data_dir.get_local_backend_dir()
+    logging.info("Syncing backend dirs %s -> %s", base_backend_dir,
+                 local_backend_dir)
+    distutils.dir_util.copy_tree(base_backend_dir, local_backend_dir)
 
     test_dir = data_dir.get_backend_dir(options.vt_type)
     if options.vt_type == 'libvirt':

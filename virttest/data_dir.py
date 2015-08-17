@@ -47,7 +47,7 @@ class UnknownBackendError(Exception):
         self.backend = backend
 
     def __str__(self):
-        return ("Virt Backend %s is not currently supported by virt-test. "
+        return ("Virt Backend %s is not currently supported by avocado-vt. "
                 "Check for typos and the list of supported backends" %
                 self.backend)
 
@@ -133,13 +133,18 @@ def get_shared_dir():
     return SHARED_DIR
 
 
+def get_base_backend_dir():
+    return BASE_BACKEND_DIR
+
+
+def get_local_backend_dir():
+    return os.path.join(get_data_dir(), 'backends')
+
+
 def get_backend_dir(backend_type):
     if backend_type not in os.listdir(BASE_BACKEND_DIR):
         raise UnknownBackendError(backend_type)
-    dst = os.path.join(get_data_dir(), 'backends')
-    if not os.path.isdir(dst):
-        shutil.copytree(BASE_BACKEND_DIR, dst)
-    return os.path.join(dst, backend_type)
+    return os.path.join(get_local_backend_dir(), backend_type)
 
 
 def get_backend_cfg_path(backend_type, cfg_basename):

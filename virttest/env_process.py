@@ -22,7 +22,6 @@ from . import qemu_monitor
 from . import ppm_utils
 from . import test_setup
 from . import virt_vm
-from . import video_maker
 from . import utils_misc
 from . import storage
 from . import qemu_storage
@@ -120,11 +119,17 @@ def preprocess_vm(test, params, env, name):
     old_vm = copy.copy(vm)
 
     if vm_type == 'libvirt':
+        install_test = ('unattended_install.import.import.default_install.'
+                        'aio_native')
+        remove_test = 'remove_guest.without_disk'
         if not vm.exists() and (params.get("type") != "unattended_install" and
                                 params.get("type") != "svirt_install"):
             error_msg = "Test VM %s does not exist." % name
             if name == params.get("main_vm"):
-                error_msg += " You may need --install option to create the guest."
+                error_msg += (" Consider adding '%s' test as the first one "
+                              "and '%s' test as last one to remove the "
+                              "guest after testing" %
+                              (install_test, remove_test))
                 raise exceptions.TestError(error_msg)
             else:
                 raise exceptions.TestNAError(error_msg)
@@ -867,7 +872,13 @@ def postprocess(test, params, env):
         if (params.get("encode_video_files", "yes") == "yes" and
                 glob.glob("%s/*" % screendump_dir)):
             try:
-                video = video_maker.GstPythonVideoMaker()
+                # Loading video_maker at the top level is causing
+                # gst to be loaded at the top level, generating
+                # side effects in the loader plugins. So, let's
+                # move the import to the precise place where it's
+                # needed.
+                from . import video_maker
+                video = video_maker.get_video_maker_klass()
                 if ((video.has_element('vp8enc') and
                      video.has_element('webmmux'))):
                     video_file = "%s.webm" % screendump_dir
@@ -875,7 +886,7 @@ def postprocess(test, params, env):
                     video_file = "%s.ogg" % screendump_dir
                 video_file = os.path.join(test.debugdir, video_file)
                 logging.debug("Encoding video file %s", video_file)
-                video.start(screendump_dir, video_file)
+                video.encode(screendump_dir, video_file)
 
             except Exception, detail:
                 logging.info(
@@ -974,7 +985,7 @@ def postprocess(test, params, env):
                 except Exception:
                     pass
         # Close the serial console session, as it'll help
-        # keeping the number of filedescriptors used by virt-test honest.
+        # keeping the number of filedescriptors used by avocado-vt honest.
         vm.cleanup_serial_console()
 
     libvirtd_inst = utils_libvirtd.Libvirtd()
