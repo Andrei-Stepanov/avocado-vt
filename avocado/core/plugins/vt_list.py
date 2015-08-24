@@ -13,7 +13,7 @@
 # Author: Lucas Meneghel Rodrigues <lmr@redhat.com>
 
 """
-Avocado plugin that augments 'avocado list' with virt-test related options.
+Avocado plugin that augments 'avocado list' with avocado-virt related options.
 """
 
 import os
@@ -22,10 +22,10 @@ import sys
 from avocado.core.settings import settings
 from avocado.core.plugins import plugin
 
-# virt-test supports using autotest from a git checkout, so we'll have to
-# support that as well. The code below will pick up the environment variable
-# $AUTOTEST_PATH and do the import magic needed to make the autotest library
-# available in the system.
+# The original virt-test runner supports using autotest from a git checkout,
+# so we'll have to support that as well. The code below will pick up the
+# environment variable $AUTOTEST_PATH and do the import magic needed to make
+# the autotest library available in the system.
 AUTOTEST_PATH = None
 
 if 'AUTOTEST_PATH' in os.environ:
@@ -70,10 +70,10 @@ if len(os.listdir(_PROVIDERS_DOWNLOAD_DIR)) == 0:
 class VirtTestListerPlugin(plugin.Plugin):
 
     """
-    Implements the avocado virt test options
+    Avocado VT - implements legacy virt-test listing
     """
 
-    name = 'virt_test_compat_lister'
+    name = 'vt_lister'
     enabled = True
 
     def configure(self, parser):

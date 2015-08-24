@@ -59,7 +59,7 @@ from ..libvirt_xml.devices import controller
 from ..libvirt_xml.devices import seclabel
 from ..libvirt_xml.devices import channel
 
-from __init__ import ping
+ping = utils_net.ping
 
 
 class LibvirtNetwork(object):
@@ -103,7 +103,7 @@ class LibvirtNetwork(object):
     def __init__(self, net_type, address=None, iface=None, net_name=None,
                  persistent=False):
         if net_name is None:
-            self.name = 'virt-test-%s' % net_type
+            self.name = 'avocado-vt-%s' % net_type
         else:
             self.name = net_name
         self.address = address
