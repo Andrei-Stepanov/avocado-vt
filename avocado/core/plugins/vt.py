@@ -972,6 +972,13 @@ class VirtTestOptionsProcess(object):
         self._process_malloc_perturb()
         self._process_qemu_sandbox()
 
+    def _process_spice_specific_options(self):
+        """
+        Calls for processing all options specific to spice test
+        """
+        #self._process_qemu_specific_options()
+        self.options.no_downloads = True
+
     def _process_lvsb_specific_options(self):
         """
         Calls for processing all options specific to lvsb test
@@ -1105,6 +1112,8 @@ class VirtTestOptionsProcess(object):
             self._process_qemu_specific_options()
         elif self.options.vt_type == 'libvirt':
             self._process_libvirt_specific_options()
+        elif self.options.vt_type == 'spice':
+            self._process_spice_specific_options()
 
     def get_parser(self):
         self._process_options()
