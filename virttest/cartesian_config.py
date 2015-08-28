@@ -2082,11 +2082,16 @@ class Parser(object):
             d_orig = d.copy()
             for key in d_orig:
                 if key not in _reserved_keys and isinstance(key, tuple):
-                    if options.skipdups:
+                    try:
+                        options.skipdups
+                        skipdups = options.skipdups
+                    except NameError:
+                        skipdups = True
+                    if skipdups:
                         # Drop vars with suffixes matches general var val
                         gen_var_name = key[0]
                         if gen_var_name in d_orig and d_orig[gen_var_name] == d_orig[key]:
-                            print("Drop: %s" % (gen_var_name,))
+                            #print("Drop: %s" % (gen_var_name,))
                             d.pop(key)
                             continue
                     # reverse order of suffixes
