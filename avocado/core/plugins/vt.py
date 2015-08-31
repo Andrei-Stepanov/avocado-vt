@@ -330,16 +330,21 @@ class VirtTestLoader(loader.TestLoader):
             params['avocado_inject_params'] = True
 
             short_name_map_file = params.get("_short_name_map_file")
-            test_name = short_name_map_file["subtests.cfg"]
-            os = short_name_map_file["guest-os.cfg"]
-            if "tests-variants.cfg" in short_name_map_file:
-                test_name = short_name_map_file["tests-variants.cfg"]
+
+            if self.args.vt_type == 'spice':
+                if "tests-variants-spice.cfg" in short_name_map_file:
+                    test_name = short_name_map_file["tests-variants-spice.cfg"]
+                else:
+                    test_name = short_name_map_file["subtests.cfg"]
+            else:
+                test_name = short_name_map_file["subtests.cfg"]
 
             params['id'] = test_name
             test_parameters = {'name': test_name,
                                'params': params}
-	    if self.args.verbose:
-		print("Discover: %s" % test_name)
+        if self.args.verbose:
+            print("Discover: %s" % params.get("shortname"))
+
             test_suite.append((VirtTest, test_parameters))
         return test_suite
 
@@ -1010,6 +1015,11 @@ class VirtTestOptionsProcess(object):
 
     def _process_guest_os(self):
         guest_os_setting = 'option --vt-guest-os'
+
+        if self.options.vt_type == 'spice' and not self.options.vt_guest_os:
+            logging.info("Ignoring %s", guest_os_setting)
+            return
+
         if not self.options.vt_config:
             if len(standalone_test.get_guest_name_list(self.options)) == 0:
                 raise ValueError("%s '%s' is not on the known guest os for "
