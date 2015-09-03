@@ -331,19 +331,20 @@ class VirtTestLoader(loader.TestLoader):
 
             short_name_map_file = params.get("_short_name_map_file")
 
+            test_name = None
             if self.args.vt_type == 'spice':
                 if "tests-variants-spice.cfg" in short_name_map_file:
                     test_name = short_name_map_file["tests-variants-spice.cfg"]
-                else:
-                    test_name = short_name_map_file["subtests.cfg"]
-            else:
+
+            if not test_name:
                 test_name = short_name_map_file["subtests.cfg"]
 
             params['id'] = test_name
             test_parameters = {'name': test_name,
                                'params': params}
-        if self.args.verbose:
-            print("Discover: %s" % params.get("shortname"))
+
+            if self.args.verbose:
+                print("Discover: %s" % params.get("shortname"))
 
             test_suite.append((VirtTest, test_parameters))
         return test_suite
