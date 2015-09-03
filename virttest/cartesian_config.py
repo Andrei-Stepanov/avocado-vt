@@ -1477,7 +1477,7 @@ class Parser(object):
         pre_dict = {}
         lexer.set_fast()
 
-        # Suffix be applied as the latests operator in the dictionary.
+        # Suffix should be applied as the last operator in the dictionary
         # Reasons:
         #     1. Escape multiply suffix operators
         #     2. Affect all elements in current block
@@ -1962,7 +1962,7 @@ class Parser(object):
                 yield d
             node.content = old_conten[:]
 
-    # Multiplie all joins. Return dictionaries one by one
+    # Multiply all joins. Return dictionaries one by one
     # Each `join' is the same as `only' filter
     # This functions is supposed to be a generator, recursive generator
     def multiply_join(self, onlys, node=None, ctx=[], content=[], shortname=[], dep=[]):
